@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: © 2024 Leo Moser <leomoser99@gmail.com>
+# SPDX-FileCopyrightText: © 2025 Leo Moser <leomoser99@gmail.com>
 # SPDX-License-Identifier: Apache-2.0
 
 import os
@@ -96,7 +96,7 @@ fpga_blinky = {
     'dump_waveforms': False,
 }
 
-enabled = custom_instruction
+enabled = hello_world
 
 async def start_clock(clock, freq=50):
     """ Start the clock @ freq MHz """
