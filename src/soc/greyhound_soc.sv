@@ -15,30 +15,31 @@ module greyhound_soc import cv32e40x_pkg::*, soc_pkg::*;
     input  logic            rst_ni,
 
     // Interrupt requests from fabric
-    input  logic [3:0]      fabric_irq_i,
+    //input  logic [3:0]      fabric_irq_i,
     
     // Fabric config is currently
     // configuring the fabric
-    input  logic            fabric_config_busy_i,
+    //input  logic            fabric_config_busy_i,
     
     // Fabric bitstream data
-    output logic            bitstream_valid_o,
-    output logic [31:0]     bitstream_data_o,
+    //output logic            bitstream_valid_o,
+    //output logic [31:0]     bitstream_data_o,
     
     // Trigger fabric reconfiguration
-    output logic            warmboot_boot_o,
-    output logic [3:0]      warmboot_slot_o,
+    //output logic            warmboot_boot_o,
+    //output logic [3:0]      warmboot_slot_o,
     
     // Choose functionality of fabric
     // 0 = custom instruction interface
     // 1 = bus interface 
-    output logic            xif_or_periph_o,
+    //output logic            xif_or_periph_o,
     
     // Custom instruction interface to fabric
-    output logic [31:0]     fabric_rs1_o,
-    output logic [31:0]     fabric_rs2_o,
-    input  logic [31:0]     fabric_result_i,
+    //output logic [31:0]     fabric_rs1_o,
+    //output logic [31:0]     fabric_rs2_o,
+    //input  logic [31:0]     fabric_result_i,
     
+/*
     // Bus interface to fabric
     input  logic            fabric_gnt_i,
     output logic            fabric_req_o,
@@ -48,7 +49,8 @@ module greyhound_soc import cv32e40x_pkg::*, soc_pkg::*;
     output logic [23:0]     fabric_addr_o,
     output logic [31:0]     fabric_wdata_o,
     input  logic [31:0]     fabric_rdata_i,
-  
+ */
+
     // SRAM
     input  logic [31:0]     bank_rdata_i,
     output logic [10:0]     bank_word_addr_o,
@@ -81,7 +83,7 @@ module greyhound_soc import cv32e40x_pkg::*, soc_pkg::*;
 );
 
     // Custom instruction interface
-    cv32e40x_if_xif ext_if();
+    //cv32e40x_if_xif ext_if();
 
     /*dummy_extension dummy_extension
     (
@@ -95,7 +97,7 @@ module greyhound_soc import cv32e40x_pkg::*, soc_pkg::*;
         .xif_mem_result     (ext_if.coproc_mem_result),
         .xif_result         (ext_if.coproc_result)
     );*/
-    
+/*    
     fabric_extension fabric_extension
     (
         .clk_i              (clk_i),
@@ -112,6 +114,7 @@ module greyhound_soc import cv32e40x_pkg::*, soc_pkg::*;
         .fabric_rs2_o,
         .fabric_result_i,
     );
+*/
 
     logic [63:0] time_counter;
     always_ff @(posedge clk_i, negedge rst_ni) begin
@@ -190,12 +193,12 @@ module greyhound_soc import cv32e40x_pkg::*, soc_pkg::*;
     sbr_obi_rsp_t uart0_obi_rsp;
     
     // FabricConfig bus
-    sbr_obi_req_t fabric_config_obi_req;
-    sbr_obi_rsp_t fabric_config_obi_rsp;
+    //sbr_obi_req_t fabric_config_obi_req;
+    //sbr_obi_rsp_t fabric_config_obi_rsp;
     
     // Fabric bus
-    sbr_obi_req_t fabric_obi_req;
-    sbr_obi_rsp_t fabric_obi_rsp;
+    //sbr_obi_req_t fabric_obi_req;
+    //sbr_obi_rsp_t fabric_obi_rsp;
 
     // Fanout to individual peripherals
     assign error_obi_req                          = all_periph_obi_req[PeriphError];
@@ -213,11 +216,12 @@ module greyhound_soc import cv32e40x_pkg::*, soc_pkg::*;
     assign uart0_obi_req                          = all_periph_obi_req[PeriphUart0];
     assign all_periph_obi_rsp[PeriphUart0]        = uart0_obi_rsp;
 
-    assign fabric_config_obi_req                  = all_periph_obi_req[PeriphFabricConfig];
-    assign all_periph_obi_rsp[PeriphFabricConfig] = fabric_config_obi_rsp;
+    //assign fabric_config_obi_req                  = all_periph_obi_req[PeriphFabricConfig];
+    assign all_periph_obi_rsp[PeriphFabricConfig] = error_obi_rsp; //chatgpt generated fix
+							//fabric_config_obi_rsp;
 
-    assign fabric_obi_req                         = all_periph_obi_req[PeriphFabric];
-    assign all_periph_obi_rsp[PeriphFabric]       = fabric_obi_rsp;
+    //assign fabric_obi_req                         = all_periph_obi_req[PeriphFabric];
+    assign all_periph_obi_rsp[PeriphFabric]       = error_obi_rsp;
 
     // Instruction memory interface
     logic                          instr_req_o;
@@ -260,7 +264,7 @@ module greyhound_soc import cv32e40x_pkg::*, soc_pkg::*;
     // Interrupt sources
     logic [31:0] irq;
     logic uart0_irq;
-    assign irq = {11'b0, uart0_irq, fabric_irq_i, 16'b0};
+    assign irq = {11'b0, uart0_irq, 4'b0, 16'b0};
 
     cv32e40x_core
     #(
@@ -274,8 +278,8 @@ module greyhound_soc import cv32e40x_pkg::*, soc_pkg::*;
       .DBG_NUM_TRIGGERS      ( 0                     ),
       .PMA_NUM_REGIONS       ( NumPMARules           ),
       .PMA_CFG               ( pma_cfg               ),
-      .X_EXT                 ( 1                     ),
-      .CLIC                  ( 0                     ), // CLINT
+      .X_EXT                 ( 0                     ),
+      .CLIC                  ( 0                     )
     ) cv32e40x_core (
       // Clock and reset
       .clk_i                 ( clk_i                 ),
@@ -324,12 +328,6 @@ module greyhound_soc import cv32e40x_pkg::*, soc_pkg::*;
       .time_i                ( time_counter          ),
 
       // eXtension interface
-      .xif_compressed_if     ( ext_if                ),
-      .xif_issue_if          ( ext_if                ),
-      .xif_commit_if         ( ext_if                ),
-      .xif_mem_if            ( ext_if                ),
-      .xif_mem_result_if     ( ext_if                ),
-      .xif_result_if         ( ext_if                ),
 
       // Basic interrupt architecture
       .irq_i                 ( irq                   ),
@@ -772,6 +770,7 @@ module greyhound_soc import cv32e40x_pkg::*, soc_pkg::*;
     );
 
     // FabricConfig Peripheral
+    /*
     localparam REG_XIF_OR_PERIPH        = 4'd0;
     localparam REG_FABRIC_CONFIG_BUSY   = 4'd4;
     localparam REG_BITSTREAM            = 4'd8;
@@ -906,5 +905,5 @@ module greyhound_soc import cv32e40x_pkg::*, soc_pkg::*;
     assign debug_fabric_rid        = fabric_obi_rsp.r.rid;
     assign debug_fabric_err        = fabric_obi_rsp.r.err;
     assign debug_fabric_r_optional = fabric_obi_rsp.r.r_optional;
-
+*/
 endmodule

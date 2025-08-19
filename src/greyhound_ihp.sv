@@ -8,32 +8,32 @@ module greyhound_ihp (
     input  logic          rst_ni,
     
     // Fabric I/O
-    input  logic [31:0] fabric_gpio_i,
-    output logic [31:0] fabric_gpio_o,
-    output logic [31:0] fabric_gpio_oe_o,
+    //input  logic [31:0] fabric_gpio_i,
+    //output logic [31:0] fabric_gpio_o,
+    //output logic [31:0] fabric_gpio_oe_o,
     
     // FPGA config
-    input  logic fpga_sclk_i,
-    output logic fpga_sclk_o,
-    output logic fpga_sclk_oe_o,
+    //input  logic fpga_sclk_i,
+    //output logic fpga_sclk_o,
+    //output logic fpga_sclk_oe_o,
     
-    input  logic fpga_cs_n_i,
-    output logic fpga_cs_n_o,
-    output logic fpga_cs_n_oe_o,
+    //input  logic fpga_cs_n_i,
+    //output logic fpga_cs_n_o,
+    //output logic fpga_cs_n_oe_o,
     
-    input  logic fpga_mosi_i,
-    output logic fpga_mosi_o,
-    output logic fpga_mosi_oe_o,
+    //input  logic fpga_mosi_i,
+    //output logic fpga_mosi_o,
+    //output logic fpga_mosi_oe_o,
     
-    input  logic fpga_miso_i,
-    output logic fpga_miso_o,
-    output logic fpga_miso_oe_o,
+    //input  logic fpga_miso_i,
+    //output logic fpga_miso_o,
+    //output logic fpga_miso_oe_o,
     
     // FPGA config mode
     // if mode == 0: SPI controller
     // if mode == 1: SPI receiver
-    input  logic fpga_mode_i,
-    output logic config_busy_o,
+    // input  logic fpga_mode_i,
+    //output logic config_busy_o,
     
     // SoC
     output logic flash_clk_o,
@@ -56,35 +56,35 @@ module greyhound_ihp (
 );
     
     // Fabric parameters
-    parameter FrameBitsPerRow = 32;
-    parameter MaxFramesPerCol = 20;
+    //parameter FrameBitsPerRow = 32;
+    //parameter MaxFramesPerCol = 20;
 
-    parameter NumColumns = 11;
-    parameter NumRows = 16;
+    //parameter NumColumns = 11;
+    //parameter NumRows = 16;
 
-    parameter FABRIC_NUM_IO_WEST = 28;
-    parameter FABRIC_NUM_IO_NORTH = 4;
+    //parameter FABRIC_NUM_IO_WEST = 28;
+    //parameter FABRIC_NUM_IO_NORTH = 4;
     
     // Fabric config is currently
     // configuring the fabric
-    wire            fabric_config_busy;
+    //wire            fabric_config_busy;
     
     // Fabric is configured
-    wire            fabric_config_configured;
+    //wire            fabric_config_configured;
     
     // Fabric SPI controller is busy
-    logic fabric_spi_controller_busy;
+    //logic fabric_spi_controller_busy;
     
     // Bitstream
-    wire            bitstream_valid_cpu;
-    wire [31:0]     bitstream_data_cpu;
+    //wire            bitstream_valid_cpu;
+    //wire [31:0]     bitstream_data_cpu;
     
     // To the fabric
-    wire [(FrameBitsPerRow*NumRows)-1:0]    FrameData;
-    wire [(MaxFramesPerCol*NumColumns)-1:0] FrameStrobe;
+    //wire [(FrameBitsPerRow*NumRows)-1:0]    FrameData;
+    //wire [(MaxFramesPerCol*NumColumns)-1:0] FrameStrobe;
     
     // Sync fpga_mode_i
-    logic [1:0] fpga_mode_d;
+    /*logic [1:0] fpga_mode_d;
     logic fpga_mode_sync;
     always_ff @(posedge clk_i) begin
         fpga_mode_d <= {fpga_mode_d[0], fpga_mode_i};
@@ -96,7 +96,8 @@ module greyhound_ihp (
     
     logic [31:0] spi_bitstream_data, spi_controller_bitstream_data_o, spi_receiver_bitstream_data_o;
     logic        spi_bitstream_valid, spi_controller_bitstream_valid_o, spi_receiver_bitstream_valid_o;
-    
+    */
+/*
     // SPI receiver
     logic spi_receiver_sclk_i;
     logic spi_receiver_cs_ni;
@@ -111,7 +112,9 @@ module greyhound_ihp (
     
     logic spi_controller_start_i;
     logic [3:0] spi_controller_slot_i;
-    
+*/
+
+    /*    
     // I/Os West
     wire [FABRIC_NUM_IO_WEST-1:0]      fabric_io_west_in_i;
     wire [FABRIC_NUM_IO_WEST-1:0]      fabric_io_west_out_o;
@@ -139,7 +142,9 @@ module greyhound_ihp (
     assign fabric_io_north_in_i = fabric_gpio_i[31:28];
     assign fabric_gpio_o        = {fabric_io_north_out_o, fabric_io_west_out_o};
     assign fabric_gpio_oe_o     = {fabric_io_north_oe_o, fabric_io_west_oe_o};
+    */
 
+/*
     // WARMBOOT
     wire        fabric_warmboot_boot_o;
     wire  [3:0] fabric_warmboot_slot_o;
@@ -152,7 +157,9 @@ module greyhound_ihp (
     // 0 = custom instruction interface
     // 1 = bus interface
     wire            xif_or_periph;
-    
+ */
+  
+    /*
     // Custom instruction interface to fabric
     wire [31:0]     fabric_rs1;
     wire [31:0]     fabric_rs2;
@@ -167,7 +174,8 @@ module greyhound_ihp (
     wire [23:0]     fabric_addr;
     wire [31:0]     fabric_wdata;
     wire [31:0]     fabric_rdata;
-    
+    */
+
     // CPU trigger reconfiguration
     wire            cpu_warmboot_boot_o;
     wire [3:0]      cpu_warmboot_slot_o;
@@ -182,10 +190,11 @@ module greyhound_ihp (
             startup_trigger = 1'b0;
         end
     end
-    
+    /* 
     always_comb begin
         // Default output
-        fpga_sclk_o = 1'b0;
+        
+	fpga_sclk_o = 1'b0;
         fpga_cs_n_o = 1'b0;
         fpga_mosi_o = 1'b0;
         fpga_miso_o = 1'b0;
@@ -196,8 +205,8 @@ module greyhound_ihp (
         spi_receiver_mosi_i = 1'b0;
         
         // Controller not selected
-        spi_controller_miso_i = 1'b0;
-
+        spi_controller_miso_i = 1'b0; */
+/*
         if (fpga_mode_sync == 1'b0) begin
             // SPI Controller
             fpga_sclk_oe_o = 1'b1;
@@ -237,9 +246,9 @@ module greyhound_ihp (
             // Slot and trigger
             spi_controller_start_i  = '0;
             spi_controller_slot_i   = '0;
-        end
-    end
-    
+        end */
+    //end
+   /* 
     fabric_spi_receiver fabric_spi_receiver (
         .clk_i  (clk_i),
         .rst_ni (rst_ni),
@@ -256,8 +265,8 @@ module greyhound_ihp (
         .cs_ni      (spi_receiver_cs_ni),
         .mosi_i     (spi_receiver_mosi_i),
         .miso_o     (spi_receiver_miso_o)
-    );
-
+    );*/
+/*
     fabric_spi_controller #(
         .BITSTREAM_LENGTH_WORDS (32'hEA2),
         .SLOT_OFFSET_WORDS      (32'h1000),
@@ -326,7 +335,7 @@ module greyhound_ihp (
 
     assign fabric_warmboot_reset_i = fabric_config_busy;
 
-    (* keep *) fabric_wrapper fabric_wrapper (
+    /*(* keep *) fabric_wrapper fabric_wrapper (
         .clk_i,
         
         // Configuration
@@ -385,7 +394,7 @@ module greyhound_ihp (
         .fabric_addr_i      (fabric_addr),
         .fabric_wdata_i     (fabric_wdata),
         .fabric_rdata_o     (fabric_rdata)
-    );
+    );*/
 
     // SoC
     
@@ -418,27 +427,28 @@ module greyhound_ihp (
         .rst_ni         ( rst_ni ),
 
         // Interrupt requests from fabric
-        .fabric_irq_i   ( fabric_irq_o ),
+        //.fabric_irq_i   ( fabric_irq_o ),
         
         // Fabric config is currently
         // configuring the fabric
-        .fabric_config_busy_i   (fabric_config_busy || fabric_spi_controller_busy),
+        //.fabric_config_busy_i   (fabric_config_busy || fabric_spi_controller_busy),
         
         // Fabric bitstream data
-        .bitstream_valid_o  (bitstream_valid_cpu),
-        .bitstream_data_o   (bitstream_data_cpu),
+        //.bitstream_valid_o  (bitstream_valid_cpu),
+        //.bitstream_data_o   (bitstream_data_cpu),
         
         // Trigger fabric reconfiguration
-        .warmboot_boot_o    (cpu_warmboot_boot_o),
-        .warmboot_slot_o    (cpu_warmboot_slot_o),
+        //.warmboot_boot_o    (cpu_warmboot_boot_o),
+        //.warmboot_slot_o    (cpu_warmboot_slot_o),
         
         // Choose functionality of fabric
         // 0 = custom instruction interface
         // 1 = bus interface 
-        .xif_or_periph_o        (xif_or_periph),
+        //.xif_or_periph_o        (xif_or_periph),
         
         // Custom instruction interface to fabric
-        .fabric_rs1_o           (fabric_rs1),
+        /*
+	.fabric_rs1_o           (fabric_rs1),
         .fabric_rs2_o           (fabric_rs2),
         .fabric_result_i        (fabric_result),
 
@@ -451,7 +461,7 @@ module greyhound_ihp (
         .fabric_addr_o          (fabric_addr),
         .fabric_wdata_o         (fabric_wdata),
         .fabric_rdata_i         (fabric_rdata),
-
+*/ 
         // SRAM
         .bank_rdata_i             (bank_rdata),
         .bank_word_addr_o         (bank_word_addr),

@@ -79,13 +79,13 @@ add_pdn_connect -grid {grid} -layers {Metal5 TopMetal2}
 add_pdn_connect -grid {grid} -layers {TopMetal1 TopMetal2}
 
 # eFPGA grid
-define_pdn_grid \
+# define_pdn_grid \
     -macro \
     -instances "i_greyhound_ihp.fabric_wrapper.eFPGA" \
     -name eFPGA \
     -starts_with POWER
 
-add_pdn_connect \
+#add_pdn_connect \
     -grid eFPGA \
     -layers "Metal5 TopMetal1"
 
@@ -93,24 +93,10 @@ add_pdn_connect \
 define_pdn_grid \
     -macro \
     -instances "\
-i_greyhound_ihp.fabric_wrapper.sram0_0 \
-i_greyhound_ihp.fabric_wrapper.sram0_1 \
-i_greyhound_ihp.fabric_wrapper.sram1_0 \
-i_greyhound_ihp.fabric_wrapper.sram1_1 \
-i_greyhound_ihp.fabric_wrapper.sram2_0 \
-i_greyhound_ihp.fabric_wrapper.sram2_1 \
-i_greyhound_ihp.fabric_wrapper.sram3_0 \
-i_greyhound_ihp.fabric_wrapper.sram3_1 \
-i_greyhound_ihp.fabric_wrapper.sram4_0 \
-i_greyhound_ihp.fabric_wrapper.sram4_1 \
-i_greyhound_ihp.fabric_wrapper.sram5_0 \
-i_greyhound_ihp.fabric_wrapper.sram5_1 \
-i_greyhound_ihp.fabric_wrapper.sram6_0 \
-i_greyhound_ihp.fabric_wrapper.sram6_1 \
-i_greyhound_ihp.i_soc_sram0_0 \
-i_greyhound_ihp.i_soc_sram0_1 \
-i_greyhound_ihp.i_soc_sram1_0 \
-i_greyhound_ihp.i_soc_sram1_1" \
+i_soc_sram0_0 \
+i_soc_sram0_1 \
+i_soc_sram1_0 \
+i_soc_sram1_1" \
     -name sram \
     -starts_with POWER
 

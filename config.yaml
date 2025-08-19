@@ -3,15 +3,14 @@ meta:
   flow: Classic
   substituting_steps:
     # IO pads are used instead of pins
-    OpenROAD.GlobalPlacementSkipIO: null
-    OpenROAD.IOPlacement: null
-    +OpenROAD.Floorplan: OpenROAD.Padring
-    
+    #OpenROAD.GlobalPlacementSkipIO: null
+    #OpenROAD.IOPlacement: null
+    #+OpenROAD.Floorplan: OpenROAD.Padring
     # ECO diodes
     +OpenROAD.GlobalRouting: Odb.InsertECODiodes
     
     # Add Seal Ring
-    +Checker.XOR: KLayout.SealRing
+    #+Checker.XOR: KLayout.SealRing
     
     # Run Filler insertion
     # This is done manually for now
@@ -51,15 +50,10 @@ meta:
     # Setup violations don't matter (for now)
     Checker.SetupViolations: null
 
-DESIGN_NAME: greyhound_ihp_top
+DESIGN_NAME: greyhound_ihp
 VERILOG_FILES:
-- dir::src/greyhound_ihp_top.v
 - dir::src/greyhound_ihp.sv
 - dir::src/soc/greyhound_soc.v
-- dir::ip/fabulous_fabric/rtl/fabric_config.sv
-- dir::ip/fabulous_fabric/rtl/fabric_spi_controller.sv
-- dir::ip/fabulous_fabric/rtl/fabric_spi_receiver.sv
-- dir::ip/fabulous_fabric/fabric_ihp/rtl/fabric_wrapper.sv
 - dir::src/soc/cv32e40x_clock_gate.sv
 - dir::ip/EF_QSPI_XIP_CTRL/hdl/rtl/EF_QSPI_XIP_CTRL.v
 - dir::ip/EF_QSPI_XIP_CTRL/hdl/rtl/DMC.v
@@ -86,9 +80,9 @@ EXTRA_LEFS:
 - dir::ip/bondpad/bondpad_70x70.lef
 
 # SDC
-PNR_SDC_FILE: dir::constraint.sdc
-SIGNOFF_SDC_FILE: dir::constraint.sdc
-FALLBACK_SDC: dir::constraint.sdc
+#PNR_SDC_FILE: dir::constraint.sdc
+#SIGNOFF_SDC_FILE: dir::constraint.sdc
+#FALLBACK_SDC: dir::constraint.sdc
 
 # Power nets
 VDD_NETS:
@@ -113,7 +107,7 @@ MAGIC_EXT_ABSTRACT_CELLS:
 # Due to thin core area ring
 GRT_ALLOW_CONGESTION: true
 
-CLOCK_NET: io_clock_p2c
+CLOCK_NET: clk_i
 CLOCK_PERIOD: 20
 CTS_OBSTRUCTION_AWARE: true
 
@@ -159,94 +153,6 @@ PL_ROUTABILITY_DRIVEN: True
 FP_PDN_CFG: dir::pdn.tcl
 
 # Padring
-PAD_IO_SOUTH: [
-    # Clock and reset
-    [sg13g2_IOPadIn,            sg13g2_IOPad_io_clock],
-    [sg13g2_IOPadIn,            sg13g2_IOPad_io_reset],
-
-    # Flash
-    [sg13g2_IOPadOut30mA,       "sg13g2_IOPad_io_flash_clk"],
-    [sg13g2_IOPadOut30mA,       "sg13g2_IOPad_io_flash_cs_n"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad_flash\\[0\\].sg13g2_IOPad_io_flash_io"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad_flash\\[1\\].sg13g2_IOPad_io_flash_io"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad_flash\\[2\\].sg13g2_IOPad_io_flash_io"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad_flash\\[3\\].sg13g2_IOPad_io_flash_io"],
-
-    # PSRAM
-    [sg13g2_IOPadOut30mA,       "sg13g2_IOPad_io_psram_clk"],
-    [sg13g2_IOPadOut30mA,       "sg13g2_IOPad_io_psram_cs_n"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad_psram\\[0\\].sg13g2_IOPad_io_psram_io"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad_psram\\[1\\].sg13g2_IOPad_io_psram_io"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad_psram\\[2\\].sg13g2_IOPad_io_psram_io"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad_psram\\[3\\].sg13g2_IOPad_io_psram_io"],
-
-    # UART
-    [sg13g2_IOPadIn,            sg13g2_IOPad_io_ser_rx],
-    [sg13g2_IOPadOut30mA,       sg13g2_IOPad_io_ser_tx]
-]
-
-PAD_IO_EAST: [
-    [sg13g2_IOPadIOVdd,         sg13g2_IOPadIOVdd_east],
-    [sg13g2_IOPadIOVss,         sg13g2_IOPadIOVss_east],
-    
-    # Misc
-    [sg13g2_IOPadIn,            sg13g2_IOPad_io_fpga_mode],
-    [sg13g2_IOPadIn,            sg13g2_IOPad_io_fetch_enable],
-    [sg13g2_IOPadOut30mA,       sg13g2_IOPad_io_config_busy],
-    [sg13g2_IOPadOut30mA,       sg13g2_IOPad_io_core_sleep],
-    
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[0\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[1\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[2\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[3\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[4\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[5\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[6\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[7\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadVss,           sg13g2_IOPadVss_east],
-    [sg13g2_IOPadVdd,           sg13g2_IOPadVdd_east]
-]
-
-PAD_IO_NORTH: [
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[23\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[22\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[21\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[20\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[19\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[18\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[17\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[16\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[15\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[14\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[13\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[12\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[11\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[10\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[9\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[8\\].sg13g2_IOPad_io_gpio"]
-]
-
-PAD_IO_WEST: [
-    [sg13g2_IOPadVdd,           sg13g2_IOPadVdd_west],
-    [sg13g2_IOPadVss,           sg13g2_IOPadVss_west],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[31\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[30\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[29\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[28\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[27\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[26\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[25\\].sg13g2_IOPad_io_gpio"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad\\[24\\].sg13g2_IOPad_io_gpio"],
-    
-    # FPGA config
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad_io_fpga_sclk"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad_io_fpga_cs_n"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad_io_fpga_mosi"],
-    [sg13g2_IOPadInOut30mA,     "sg13g2_IOPad_io_fpga_miso"],
-    
-    [sg13g2_IOPadIOVss,         sg13g2_IOPadIOVss_west],
-    [sg13g2_IOPadIOVdd,         sg13g2_IOPadIOVdd_west]
-]
 
 MACROS:
   
@@ -264,20 +170,6 @@ MACROS:
   #      location: [450, 450]
   #      orientation: N
 
-  eFPGA:
-    gds:
-      - dir::ip/fabulous_fabric/fabric_ihp/macro/ihp-sg13g2/gds/eFPGA.gds
-    lef:
-      - dir::ip/fabulous_fabric/fabric_ihp/macro/ihp-sg13g2/lef/eFPGA.lef
-    nl:
-      - dir::ip/fabulous_fabric/fabric_ihp/macro/ihp-sg13g2/nl/eFPGA.nl.v
-    spef:
-      "nom_*":
-        - dir::ip/fabulous_fabric/fabric_ihp/macro/ihp-sg13g2/spef/nom/eFPGA.nom.spef
-    instances: 
-      i_greyhound_ihp.fabric_wrapper.eFPGA:
-        location: [595.24, 1060.92]
-        orientation: N
     
   RM_IHPSG13_1P_1024x16_c2_bm_bist:
     gds:
@@ -294,122 +186,28 @@ MACROS:
       "nom_slow_1p08V_125C":
         - pdk_dir::libs.ref/sg13g2_sram/lib/RM_IHPSG13_1P_1024x16_c2_bm_bist_slow_1p08V_125C.lib
     instances:
-
-      i_greyhound_ihp.fabric_wrapper.sram0_0:
-        location: [2901.5, 4077.66]
-        orientation: E
-      i_greyhound_ihp.fabric_wrapper.sram1_0:
-        location: [2901.5, 3574.99]
-        orientation: E
-      i_greyhound_ihp.fabric_wrapper.sram2_0:
-        location: [2901.5, 3072.31]
-        orientation: E
-      i_greyhound_ihp.fabric_wrapper.sram3_0:
-        location: [2901.5, 2569.64]
-        orientation: E
-      i_greyhound_ihp.fabric_wrapper.sram4_0:
-        location: [2901.5, 2066.96]
-        orientation: E
-      i_greyhound_ihp.fabric_wrapper.sram5_0:
-        location: [2901.5, 1564.29]
-        orientation: E
-      i_greyhound_ihp.fabric_wrapper.sram6_0:
-        location: [2901.5, 1061.61]
-        orientation: E
-
-      i_greyhound_ihp.fabric_wrapper.sram0_1:
-        location: [2901.5, 4329]
-        orientation: E
-      i_greyhound_ihp.fabric_wrapper.sram1_1:
-        location: [2901.5, 3826.32]
-        orientation: E
-      i_greyhound_ihp.fabric_wrapper.sram2_1:
-        location: [2901.5, 3323.65]
-        orientation: E
-      i_greyhound_ihp.fabric_wrapper.sram3_1:
-        location: [2901.5, 2820.97]
-        orientation: E
-      i_greyhound_ihp.fabric_wrapper.sram4_1:
-        location: [2901.5, 2318.30]
-        orientation: E
-      i_greyhound_ihp.fabric_wrapper.sram5_1:
-        location: [2901.5, 1815.62]
-        orientation: E
-      i_greyhound_ihp.fabric_wrapper.sram6_1:
-        location: [2901.5, 1312.95]
-        orientation: E
-
-      i_greyhound_ihp.i_soc_sram0_0:
+      i_soc_sram0_0:
         location: [969.5, 363.9]
         orientation: W
-      i_greyhound_ihp.i_soc_sram0_1:
+      i_soc_sram0_1:
         location: [1498, 363.9]
         orientation: E
-
-      i_greyhound_ihp.i_soc_sram1_0:
+      i_soc_sram1_0:
         location: [1840, 363.9]
         orientation: W
-      i_greyhound_ihp.i_soc_sram1_1:
+      i_soc_sram1_1:
         location: [2368.5, 363.9]
         orientation: E
 
 PDN_MACRO_CONNECTIONS:
-  - "i_greyhound_ihp.fabric_wrapper.eFPGA VDD VSS VPWR VGND"
-  - "i_greyhound_ihp.fabric_wrapper.sram0_0 VDD VSS VDD! VSS!"
-  - "i_greyhound_ihp.fabric_wrapper.sram0_0 VDD VSS VDDARRAY! VSS!"
-  - "i_greyhound_ihp.fabric_wrapper.sram0_1 VDD VSS VDD! VSS!"
-  - "i_greyhound_ihp.fabric_wrapper.sram0_1 VDD VSS VDDARRAY! VSS!"
-  - "i_greyhound_ihp.fabric_wrapper.sram1_0 VDD VSS VDD! VSS!"
-  - "i_greyhound_ihp.fabric_wrapper.sram1_0 VDD VSS VDDARRAY! VSS!"
-  - "i_greyhound_ihp.fabric_wrapper.sram1_1 VDD VSS VDD! VSS!"
-  - "i_greyhound_ihp.fabric_wrapper.sram1_1 VDD VSS VDDARRAY! VSS!"
-  - "i_greyhound_ihp.fabric_wrapper.sram2_0 VDD VSS VDD! VSS!"
-  - "i_greyhound_ihp.fabric_wrapper.sram2_0 VDD VSS VDDARRAY! VSS!"
-  - "i_greyhound_ihp.fabric_wrapper.sram2_1 VDD VSS VDD! VSS!"
-  - "i_greyhound_ihp.fabric_wrapper.sram2_1 VDD VSS VDDARRAY! VSS!"
-  - "i_greyhound_ihp.fabric_wrapper.sram3_0 VDD VSS VDD! VSS!"
-  - "i_greyhound_ihp.fabric_wrapper.sram3_0 VDD VSS VDDARRAY! VSS!"
-  - "i_greyhound_ihp.fabric_wrapper.sram3_1 VDD VSS VDD! VSS!"
-  - "i_greyhound_ihp.fabric_wrapper.sram3_1 VDD VSS VDDARRAY! VSS!"
-  - "i_greyhound_ihp.fabric_wrapper.sram4_0 VDD VSS VDD! VSS!"
-  - "i_greyhound_ihp.fabric_wrapper.sram4_0 VDD VSS VDDARRAY! VSS!"
-  - "i_greyhound_ihp.fabric_wrapper.sram4_1 VDD VSS VDD! VSS!"
-  - "i_greyhound_ihp.fabric_wrapper.sram4_1 VDD VSS VDDARRAY! VSS!"
-  - "i_greyhound_ihp.fabric_wrapper.sram5_0 VDD VSS VDD! VSS!"
-  - "i_greyhound_ihp.fabric_wrapper.sram5_0 VDD VSS VDDARRAY! VSS!"
-  - "i_greyhound_ihp.fabric_wrapper.sram5_1 VDD VSS VDD! VSS!"
-  - "i_greyhound_ihp.fabric_wrapper.sram5_1 VDD VSS VDDARRAY! VSS!"
-  - "i_greyhound_ihp.fabric_wrapper.sram6_0 VDD VSS VDD! VSS!"
-  - "i_greyhound_ihp.fabric_wrapper.sram6_0 VDD VSS VDDARRAY! VSS!"
-  - "i_greyhound_ihp.fabric_wrapper.sram6_1 VDD VSS VDD! VSS!"
-  - "i_greyhound_ihp.fabric_wrapper.sram6_1 VDD VSS VDDARRAY! VSS!"
-  - "i_greyhound_ihp.i_soc_sram0_0 VDD VSS VDD! VSS!"
-  - "i_greyhound_ihp.i_soc_sram0_0 VDD VSS VDDARRAY! VSS!"
-  - "i_greyhound_ihp.i_soc_sram0_1 VDD VSS VDD! VSS!"
-  - "i_greyhound_ihp.i_soc_sram0_1 VDD VSS VDDARRAY! VSS!"
-  - "i_greyhound_ihp.i_soc_sram1_0 VDD VSS VDD! VSS!"
-  - "i_greyhound_ihp.i_soc_sram1_0 VDD VSS VDDARRAY! VSS!"
-  - "i_greyhound_ihp.i_soc_sram1_1 VDD VSS VDD! VSS!"
-  - "i_greyhound_ihp.i_soc_sram1_1 VDD VSS VDDARRAY! VSS!"
+  - "i_soc_sram0_0 VDD VSS VDD! VSS!"
+  - "i_soc_sram0_0 VDD VSS VDDARRAY! VSS!"
+  - "i_soc_sram0_1 VDD VSS VDD! VSS!"
+  - "i_soc_sram0_1 VDD VSS VDDARRAY! VSS!"
+  - "i_soc_sram1_0 VDD VSS VDD! VSS!"
+  - "i_soc_sram1_0 VDD VSS VDDARRAY! VSS!"
+  - "i_soc_sram1_1 VDD VSS VDD! VSS!"
+  - "i_soc_sram1_1 VDD VSS VDDARRAY! VSS!"
 
 DIODE_CELL: sg13g2_antennanp/A
 
-INSERT_ECO_DIODES:
-- target: i_greyhound_ihp.fabric_wrapper.eFPGA/Tile_X0Y1_A_O_top
-- target: i_greyhound_ihp.fabric_wrapper.eFPGA/Tile_X0Y2_A_O_top
-- target: i_greyhound_ihp.fabric_wrapper.eFPGA/Tile_X0Y3_A_O_top
-- target: i_greyhound_ihp.fabric_wrapper.eFPGA/Tile_X0Y4_A_O_top
-- target: i_greyhound_ihp.fabric_wrapper.eFPGA/Tile_X0Y5_A_O_top
-- target: i_greyhound_ihp.fabric_wrapper.eFPGA/Tile_X0Y6_A_O_top
-- target: i_greyhound_ihp.fabric_wrapper.eFPGA/Tile_X0Y7_A_O_top
-- target: i_greyhound_ihp.fabric_wrapper.eFPGA/Tile_X0Y8_A_O_top
-- target: i_greyhound_ihp.fabric_wrapper.eFPGA/Tile_X0Y9_A_O_top
-- target: i_greyhound_ihp.fabric_wrapper.eFPGA/Tile_X0Y10_A_O_top
-- target: i_greyhound_ihp.fabric_wrapper.eFPGA/Tile_X0Y11_A_O_top
-- target: i_greyhound_ihp.fabric_wrapper.eFPGA/Tile_X0Y12_A_O_top
-- target: i_greyhound_ihp.fabric_wrapper.eFPGA/Tile_X0Y13_A_O_top
-- target: i_greyhound_ihp.fabric_wrapper.eFPGA/Tile_X0Y14_A_O_top
-- target: i_greyhound_ihp.fabric_wrapper.eFPGA/Tile_X1Y0_A_O_top
-- target: i_greyhound_ihp.fabric_wrapper.eFPGA/Tile_X1Y0_B_O_top
-- target: i_greyhound_ihp.fabric_wrapper.eFPGA/Tile_X2Y0_A_O_top
-- target: i_greyhound_ihp.fabric_wrapper.eFPGA/Tile_X2Y0_B_O_top
