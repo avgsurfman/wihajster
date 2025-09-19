@@ -201,6 +201,7 @@ module greyhound_soc import cv32e40x_pkg::*, soc_pkg::*;
     //sbr_obi_rsp_t fabric_obi_rsp;
 
     // Fanout to individual peripherals
+    // THIS IS AN ADRESS MAP
     assign error_obi_req                          = all_periph_obi_req[PeriphError];
     assign all_periph_obi_rsp[PeriphError]        = error_obi_rsp;
 
@@ -216,6 +217,8 @@ module greyhound_soc import cv32e40x_pkg::*, soc_pkg::*;
     assign uart0_obi_req                          = all_periph_obi_req[PeriphUart0];
     assign all_periph_obi_rsp[PeriphUart0]        = uart0_obi_rsp;
 
+    // TODO: FIX THIS (probably that's why shit is fucked)
+    // that or hanging wires/bad params
     //assign fabric_config_obi_req                  = all_periph_obi_req[PeriphFabricConfig];
     assign all_periph_obi_rsp[PeriphFabricConfig] = error_obi_rsp; //chatgpt generated fix
 							//fabric_config_obi_rsp;

@@ -45,7 +45,7 @@ package soc_pkg;
 
     localparam bit [31:0] Uart0AddrOffset           = 32'h3000_0000;
     localparam bit [31:0] Uart0AddrRange            = 32'h0001_0000;
-    
+    // change this
     localparam bit [31:0] FabricConfigAddrOffset    = 32'h4000_0000;
     localparam bit [31:0] FabricConfigAddrRange     = 32'h0000_0100;
     

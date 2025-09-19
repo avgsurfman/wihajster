@@ -3,12 +3,17 @@ meta:
   flow: Classic
   substituting_steps:
     # IO pads are used instead of pins
-    #OpenROAD.GlobalPlacementSkipIO: null
-    #OpenROAD.IOPlacement: null
-    #+OpenROAD.Floorplan: OpenROAD.Padring
+    OpenROAD.GlobalPlacementSkipIO: null
+    OpenROAD.IOPlacement: null
+    #+Odb.SetPowerConnections: OpenROAD.Padring
+    
     # ECO diodes
     +OpenROAD.GlobalRouting: Odb.InsertECODiodes
     
+    # ECO buffers
+    # TODO: OpenRoad ResizerTimingPostGRT
+    +OpenROAD.CTS: Odb.InsertECOBuffers 
+
     # Add Seal Ring
     #+Checker.XOR: KLayout.SealRing
     
@@ -22,7 +27,7 @@ meta:
     
     # We use the LEFs without obstruction
     # later on for extraction
-    Magic.SpiceExtraction: null
+    # Magic.SpiceExtraction: null
     
     # Magic reports some overlaps
     # I think the padring has some overlapping cells
@@ -30,18 +35,12 @@ meta:
     Checker.IllegalOverlap: null
     
     # We run our own LVS after OpenLane
-    Netgen.LVS: null
+    # Netgen.LVS: null
     
     Magic.WriteLEF: null # writes empty lef
     Odb.CheckDesignAntennaProperties: null # requires LEF
 
-    # IHP uses cumulative antenna rules
-    # which aren't supported in repair yet
-    OpenROAD.RepairAntennas: null
-    
-    # Errors out due to some
-    # the sv -> v conversion
-    Verilator.Lint: null
+    Verilator.Lint: null 
     
     # Some warnings in the SoC
     # GL simulation is fine
@@ -66,6 +65,15 @@ VERILOG_FILES:
 
 VERILOG_DEFINES:
 - FUNCTIONAL
+- PnR
+
+# Debugging
+SET_RC_VERBOSE: True
+
+# use slang
+#USE_SLANG: True
+
+
 
 # Magic has an offset on the SRAMs
 PRIMARY_GDSII_STREAMOUT_TOOL: klayout
@@ -80,9 +88,9 @@ EXTRA_LEFS:
 - dir::ip/bondpad/bondpad_70x70.lef
 
 # SDC
-#PNR_SDC_FILE: dir::constraint.sdc
-#SIGNOFF_SDC_FILE: dir::constraint.sdc
-#FALLBACK_SDC: dir::constraint.sdc
+PNR_SDC_FILE: dir::constraint.sdc
+SIGNOFF_SDC_FILE: dir::constraint.sdc
+FALLBACK_SDC: dir::constraint.sdc
 
 # Power nets
 VDD_NETS:
@@ -111,38 +119,44 @@ CLOCK_NET: clk_i
 CLOCK_PERIOD: 20
 CTS_OBSTRUCTION_AWARE: true
 
+#CTS_SINK_CLUSTERING_ENABLE: true
+
+SIGNAL_WIRE_RC_LAYERS: [Metal2, Metal3, Metal4, Metal5]
+CLOCK_WIRE_RC_LAYERS: [Metal2, Metal3, Metal4, Metal5]
+
+
 # Floorplanning
 FP_SIZING: absolute
 DIE_AREA:  [   0.00,   0.00, 3600.00, 5000.00 ]
 CORE_AREA: [ 362, 362, 3238, 4638 ]
 FP_OBSTRUCTIONS:
 - [362, 1060.5, 3238, 4638] # top area
-PL_TARGET_DENSITY_PCT: 43
+PL_TARGET_DENSITY_PCT: 53
 
 # TopMetal2 obstructions for the logo
 # Metal5 obstructions to prevent PDN from doing sth stupid between the SRAMs
 PDN_OBSTRUCTIONS:
- - [TopMetal2, 450, 450, 900, 900]
- - [Metal5, 2901.5, 1298.41, 3237.96, 1312.95]
- - [Metal5, 2901.5, 1549.75, 3237.96, 1564.29]
- - [Metal5, 2901.5, 1801.09, 3237.96, 1815.63]
- - [Metal5, 2901.5, 2052.43, 3237.96, 2066.97]
- - [Metal5, 2901.5, 2303.77, 3237.96, 2318.31]
- - [Metal5, 2901.5, 2555.11, 3237.96, 2569.65]
- - [Metal5, 2901.5, 2806.45, 3237.96, 2820.99]
- - [Metal5, 2901.5, 3057.79, 3237.96, 3072.33]
- - [Metal5, 2901.5, 3309.13, 3237.96, 3323.67]
- - [Metal5, 2901.5, 3560.47, 3237.96, 3575.01]
- - [Metal5, 2901.5, 3811.81, 3237.96, 3826.35]
- - [Metal5, 2901.5, 4063.15, 3237.96, 4077.69]
- - [Metal5, 2901.5, 4314.49, 3237.96, 4329.03]
- - [Metal5, 2901.5, 4565.83, 3237.96, 4580.37]
+# - [TopMetal2, 450, 450, 900, 900]
+# - [Metal5, 2901.5, 1298.41, 3237.96, 1312.95]
+# - [Metal5, 2901.5, 1549.75, 3237.96, 1564.29]
+# - [Metal5, 2901.5, 1801.09, 3237.96, 1815.63]
+# - [Metal5, 2901.5, 2052.43, 3237.96, 2066.97]
+# - [Metal5, 2901.5, 2303.77, 3237.96, 2318.31]
+# - [Metal5, 2901.5, 2555.11, 3237.96, 2569.65]
+# - [Metal5, 2901.5, 2806.45, 3237.96, 2820.99]
+# - [Metal5, 2901.5, 3057.79, 3237.96, 3072.33]
+# - [Metal5, 2901.5, 3309.13, 3237.96, 3323.67]
+# - [Metal5, 2901.5, 3560.47, 3237.96, 3575.01]
+# - [Metal5, 2901.5, 3811.81, 3237.96, 3826.35] 
+# - [Metal5, 2901.5, 4063.15, 3237.96, 4077.69]
+# - [Metal5, 2901.5, 4314.49, 3237.96, 4329.03]
+# - [Metal5, 2901.5, 4565.83, 3237.96, 4580.37]
 ROUTING_OBSTRUCTIONS:
- - [TopMetal2, 450, 450, 900, 900]
- - [Metal5, 2905, 1065, 3235, 4564]
+- [TopMetal2, 450, 450, 900, 900]
+- [Metal5, 2905, 1065, 3235, 4564]
 
 # Don't insert buffers between eFPGA and SRAMs
-RSZ_DONT_TOUCH_RX: "fabric_wrapper.fabric_sram.*"
+#RSZ_DONT_TOUCH_RX: "fabric_wrapper.fabric_sram.*"
 
 # Time driven placement ignores don't touch directives
 # Therefore only enable routability driven
@@ -151,6 +165,8 @@ PL_ROUTABILITY_DRIVEN: True
 
 # PDN
 FP_PDN_CFG: dir::pdn.tcl
+
+
 
 # Padring
 

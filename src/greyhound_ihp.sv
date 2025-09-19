@@ -97,7 +97,8 @@ module greyhound_ihp (
     logic [31:0] spi_bitstream_data, spi_controller_bitstream_data_o, spi_receiver_bitstream_data_o;
     logic        spi_bitstream_valid, spi_controller_bitstream_valid_o, spi_receiver_bitstream_valid_o;
     */
-/*
+/*  /////
+    ///  ... is this needed?
     // SPI receiver
     logic spi_receiver_sclk_i;
     logic spi_receiver_cs_ni;
