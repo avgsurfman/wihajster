@@ -9,7 +9,7 @@ from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles
 from cocotb.triggers import Timer, Edge, RisingEdge, FallingEdge
 from cocotb.regression import TestFactory
-from cocotb.runner import get_runner
+from cocotb_tools.runner import get_runner
 from cocotbext.uart import UartSource, UartSink
 
 hello_world = {
@@ -95,7 +95,7 @@ async def test_custom_instruction(dut):
 if __name__ == "__main__":
 
     sim         = os.getenv("SIM", "icarus")
-    pdk_root    = os.getenv("PDK_ROOT", "~/.volare")
+    pdk_root    = os.getenv("PDK_ROOT", "~/.ciel")
     pdk         = os.getenv("PDK", "ihp-sg13g2")
     scl         = os.getenv("SCL", "sg13g2_stdcell")
     gl          = os.getenv("GL", False)

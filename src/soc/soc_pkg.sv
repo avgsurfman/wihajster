@@ -46,13 +46,15 @@ package soc_pkg;
     localparam bit [31:0] Uart0AddrOffset           = 32'h3000_0000;
     localparam bit [31:0] Uart0AddrRange            = 32'h0001_0000;
     // change this
+    /*
     localparam bit [31:0] FabricConfigAddrOffset    = 32'h4000_0000;
     localparam bit [31:0] FabricConfigAddrRange     = 32'h0000_0100;
     
     localparam bit [31:0] FabricAddrOffset          = 32'h5000_0000;
     localparam bit [31:0] FabricAddrRange           = 32'h0100_0000; // 24bit
-
-    localparam int unsigned NumPeriphRules  = 6;
+    */
+ 
+    localparam int unsigned NumPeriphRules  = 4;
     localparam int unsigned NumPeriphs      = NumPeriphRules + 1; // additional OBI error
 
     // Enum for bus indices
