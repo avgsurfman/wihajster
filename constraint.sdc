@@ -1,4 +1,4 @@
-current_design greyhound_ihp_top
+current_design greyhound_ihp
 set_units -time ns -resistance kOhm -capacitance pF -voltage V -current uA
 
 # Set a higher limits than in lib

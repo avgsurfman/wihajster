@@ -67,12 +67,22 @@ VERILOG_DEFINES:
 - FUNCTIONAL
 - PnR
 
+#LINTER_DISABLE_WARNINGS:
+#- DECLFILENAME
+#- EOFNEWLINE
+#- PINCONNECTEMPTY
+#- TIMESCALEMOD
+#- GENUNNAMED
+
 # Debugging
 SET_RC_VERBOSE: True
 
-# use slang
-#USE_SLANG: True
+# Select the minimal runset
+KLAYOUT_DRC_RUNSET: pdk_dir::/libs.tech/klayout/tech/drc/sg13g2_minimal.lydrc
 
+# use slang
+USE_SLANG: True
+SLANG_ARGUMENTS: ['--ignore-assertions', '--keep-hierarchy']
 
 
 # Magic has an offset on the SRAMs
@@ -88,9 +98,9 @@ EXTRA_LEFS:
 - dir::ip/bondpad/bondpad_70x70.lef
 
 # SDC
-PNR_SDC_FILE: dir::constraint.sdc
-SIGNOFF_SDC_FILE: dir::constraint.sdc
-FALLBACK_SDC: dir::constraint.sdc
+#PNR_SDC_FILE: dir::constraint.sdc
+#SIGNOFF_SDC_FILE: dir::constraint.sdc
+#FALLBACK_SDC: dir::constraint.sdc
 
 # Power nets
 VDD_NETS:
@@ -100,6 +110,10 @@ GND_NETS:
 
 # Perform extraction using the LEF/DEF
 MAGIC_EXT_USE_GDS: false
+
+IGNORE_DISCONNECTED_MODULES:
+# Ignore missing power pins
+- bondpad_70x70
 
 # The IO cells do not extract properly yet
 MAGIC_EXT_ABSTRACT_CELLS:
@@ -119,7 +133,7 @@ CLOCK_NET: clk_i
 CLOCK_PERIOD: 20
 CTS_OBSTRUCTION_AWARE: true
 
-#CTS_SINK_CLUSTERING_ENABLE: true
+CTS_SINK_CLUSTERING_ENABLE: true
 
 SIGNAL_WIRE_RC_LAYERS: [Metal2, Metal3, Metal4, Metal5]
 CLOCK_WIRE_RC_LAYERS: [Metal2, Metal3, Metal4, Metal5]
@@ -166,7 +180,112 @@ PL_ROUTABILITY_DRIVEN: True
 # PDN
 FP_PDN_CFG: dir::pdn.tcl
 
+PDN_CFG: dir::pdn_cfg.tcl
 
+PDN_CORE_RING_VWIDTH: 15
+PDN_CORE_RING_HWIDTH: 15
+
+PDN_VPITCH: 50
+PDN_HPITCH: 50
+
+PDN_VWIDTH: 3.5
+PDN_HWIDTH: 3.5
+
+# Because we have multiple power pads for one power domain
+# MAGIC_EXT_UNIQUE: notopports
+# 
+# PAD_SOUTH: [
+#     # Clock and reset
+#     sg13g2_IOPad_io_clock,
+#     sg13g2_IOPad_io_reset,
+# 
+#     # Flash
+#     "sg13g2_IOPad_io_flash_clk",
+#     "sg13g2_IOPad_io_flash_cs_n",
+#     "sg13g2_IOPad_flash\\[0\\].sg13g2_IOPad_io_flash_io",
+#     "sg13g2_IOPad_flash\\[1\\].sg13g2_IOPad_io_flash_io",
+#     "sg13g2_IOPad_flash\\[2\\].sg13g2_IOPad_io_flash_io",
+#     "sg13g2_IOPad_flash\\[3\\].sg13g2_IOPad_io_flash_io",
+# 
+#     # PSRAM
+#     "sg13g2_IOPad_io_psram_clk",
+#     "sg13g2_IOPad_io_psram_cs_n",
+#     "sg13g2_IOPad_psram\\[0\\].sg13g2_IOPad_io_psram_io",
+#     "sg13g2_IOPad_psram\\[1\\].sg13g2_IOPad_io_psram_io",
+#     "sg13g2_IOPad_psram\\[2\\].sg13g2_IOPad_io_psram_io",
+#     "sg13g2_IOPad_psram\\[3\\].sg13g2_IOPad_io_psram_io",
+# 
+#     # UART
+#     sg13g2_IOPad_io_ser_rx,
+#     sg13g2_IOPad_io_ser_tx
+# ]
+# 
+# PAD_EAST: [
+#     sg13g2_IOPadIOVdd_east,
+#     sg13g2_IOPadIOVss_east,
+#         
+#     # Misc
+#     sg13g2_IOPad_io_fpga_mode,
+#     sg13g2_IOPad_io_fetch_enable,
+#     sg13g2_IOPad_io_config_busy,
+#     sg13g2_IOPad_io_core_sleep,
+#         
+#     "sg13g2_IOPad\\[0\\].sg13g2_IOPad_io_gpio",
+#     "sg13g2_IOPad\\[1\\].sg13g2_IOPad_io_gpio",
+#     "sg13g2_IOPad\\[2\\].sg13g2_IOPad_io_gpio",
+#     "sg13g2_IOPad\\[3\\].sg13g2_IOPad_io_gpio",
+#     "sg13g2_IOPad\\[4\\].sg13g2_IOPad_io_gpio",
+#     "sg13g2_IOPad\\[5\\].sg13g2_IOPad_io_gpio",
+#     "sg13g2_IOPad\\[6\\].sg13g2_IOPad_io_gpio",
+#     "sg13g2_IOPad\\[7\\].sg13g2_IOPad_io_gpio",
+#     sg13g2_IOPadVss_east,
+#     sg13g2_IOPadVdd_east
+# ]
+# 
+# PAD_NORTH: [
+#     "sg13g2_IOPad\\[23\\].sg13g2_IOPad_io_gpio",
+#     "sg13g2_IOPad\\[22\\].sg13g2_IOPad_io_gpio",
+#     "sg13g2_IOPad\\[21\\].sg13g2_IOPad_io_gpio",
+#     "sg13g2_IOPad\\[20\\].sg13g2_IOPad_io_gpio",
+#     "sg13g2_IOPad\\[19\\].sg13g2_IOPad_io_gpio",
+#     "sg13g2_IOPad\\[18\\].sg13g2_IOPad_io_gpio",
+#     "sg13g2_IOPad\\[17\\].sg13g2_IOPad_io_gpio",
+#     "sg13g2_IOPad\\[16\\].sg13g2_IOPad_io_gpio",
+#     "sg13g2_IOPad\\[15\\].sg13g2_IOPad_io_gpio",
+#     "sg13g2_IOPad\\[14\\].sg13g2_IOPad_io_gpio",
+#     "sg13g2_IOPad\\[13\\].sg13g2_IOPad_io_gpio",
+#     "sg13g2_IOPad\\[12\\].sg13g2_IOPad_io_gpio",
+#     "sg13g2_IOPad\\[11\\].sg13g2_IOPad_io_gpio",
+#     "sg13g2_IOPad\\[10\\].sg13g2_IOPad_io_gpio",
+#     "sg13g2_IOPad\\[9\\].sg13g2_IOPad_io_gpio",
+#     "sg13g2_IOPad\\[8\\].sg13g2_IOPad_io_gpio"
+# ]
+# 
+# PAD_WEST: [
+#     sg13g2_IOPadVdd_west,
+#     sg13g2_IOPadVss_west,
+# 
+#     "sg13g2_IOPad\\[31\\].sg13g2_IOPad_io_gpio",
+#     "sg13g2_IOPad\\[30\\].sg13g2_IOPad_io_gpio",
+#     "sg13g2_IOPad\\[29\\].sg13g2_IOPad_io_gpio",
+#     "sg13g2_IOPad\\[28\\].sg13g2_IOPad_io_gpio",
+#     "sg13g2_IOPad\\[27\\].sg13g2_IOPad_io_gpio",
+#     "sg13g2_IOPad\\[26\\].sg13g2_IOPad_io_gpio",
+#     "sg13g2_IOPad\\[25\\].sg13g2_IOPad_io_gpio",
+#     "sg13g2_IOPad\\[24\\].sg13g2_IOPad_io_gpio",
+#         
+#     # FPGA config
+#     #"sg13g2_IOPad_io_fpga_sclk",
+#     #"sg13g2_IOPad_io_fpga_cs_n",
+#     #"sg13g2_IOPad_io_fpga_mosi",
+#     #"sg13g2_IOPad_io_fpga_miso",
+#         
+#     sg13g2_IOPadIOVss_west,
+#     sg13g2_IOPadIOVdd_west
+# ]
+
+FP_MACRO_HORIZONTAL_HALO: 5
+FP_MACRO_VERTICAL_HALO: 5
 
 # Padring
 
