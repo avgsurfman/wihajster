@@ -81,8 +81,8 @@ SET_RC_VERBOSE: True
 KLAYOUT_DRC_RUNSET: pdk_dir::/libs.tech/klayout/tech/drc/sg13g2_minimal.lydrc
 
 # use slang
-USE_SLANG: True
-SLANG_ARGUMENTS: ['--ignore-assertions', '--keep-hierarchy']
+#USE_SLANG: True
+#SLANG_ARGUMENTS: ['--ignore-assertions', '--keep-hierarchy']
 
 
 # Magic has an offset on the SRAMs
@@ -133,7 +133,7 @@ CLOCK_NET: clk_i
 CLOCK_PERIOD: 20
 CTS_OBSTRUCTION_AWARE: true
 
-CTS_SINK_CLUSTERING_ENABLE: true
+#CTS_SINK_CLUSTERING_ENABLE: true
 
 SIGNAL_WIRE_RC_LAYERS: [Metal2, Metal3, Metal4, Metal5]
 CLOCK_WIRE_RC_LAYERS: [Metal2, Metal3, Metal4, Metal5]
